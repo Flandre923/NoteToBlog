@@ -61,6 +61,6 @@ def run(main:Callable[[str,str,str],None]):
     # 创建主窗口
     root = tk.Tk()
     # 创建 PathChooser 实例
-    chooser = PathChooser(root,main)
+    PathChooser(root,main)
     # 运行主循环
     root.mainloop()
