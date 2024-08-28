@@ -1,9 +1,11 @@
 import json
-from typing import List
 import os
-from hello_world.ImageHelper import ImageManager
-from hello_world.GitHubUploader import GitHubUploader
+from typing import List
+
 from loguru import logger
+
+from hello_world.GitHubUploader import GitHubUploader
+from hello_world.ImageHelper import ImageManager
 
 
 class SharedMetadata:
@@ -35,6 +37,7 @@ class BlogPost:
         self.image_manager: ImageManager = image_manager
         self.uploader: GitHubUploader = uploader
         self.title: str  # 标题
+        self.file_name: str
         self.image_path: str = root_path  # 图片
         self.draft: str = "false"  # false
         self.root_path: str  # root 文件夹的路径
@@ -51,7 +54,7 @@ class BlogPost:
             f"Shared Metadata: {self.shared_metadata.to_json()}"
         )
 
-    def reslove(self)->None:
+    def reslove(self) -> None:
         # 1. 给发出地址切分出文件名
         # 2. 将获得的文件名去掉空格和非法字符作为title
         # 2. 读取file所在目录下的init.json 文件的内容
@@ -67,6 +70,7 @@ class BlogPost:
         try:
             file_name = os.path.basename(self.file_path)
             self.title = file_name.replace(".md", "").strip()
+            self.file_name = self.title.replace(" ", "_").replace("-", "_")
             init_file_path = os.path.join(os.path.dirname(self.file_path), "init.json")
             with open(init_file_path, "r", encoding="utf-8") as f:
                 init_data = json.load(f)
@@ -74,7 +78,7 @@ class BlogPost:
             self.image_path = self.uploader.upload(self.image_manager.getImage())
             updated_content = self._markdown_content_replace()
             output_file_path = os.path.join(
-                os.path.join(self.out_path, self.relative_path), f"{self.title}.md"
+                os.path.join(self.out_path, self.relative_path), f"{self.file_name}.md"
             )
             # 如果output_file_path不存在，则创建
             os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
@@ -83,7 +87,8 @@ class BlogPost:
             logger.info(f"Blog post written to {output_file_path}")
         except Exception as e:
             logger.error(f"Error resolving blog post: {e}")
-    def _markdown_content_replace(self)->str:
+
+    def _markdown_content_replace(self) -> str:
         """
         读取markdown文件的内容，将其中的所有本地的图片上传到图床，并用上传后的地址替换本地的地址，将替换后的内容返回
         """
@@ -120,14 +125,16 @@ class BlogPost:
 
                         # 提取图片链接
                         img_link = line[end_img_index + 2 : end_url_index]
-                        img_link = os.path.join(os.path.dirname(self.file_path), img_link)
+                        img_link = os.path.join(
+                            os.path.dirname(self.file_path), img_link
+                        )
                         # 上传图片并获取GitHub链接
                         github_img_url = self.uploader.upload(img_link)
                         # 替换Markdown中的图片链接
                         line = (
-                            line[:end_img_index+2]
+                            line[: end_img_index + 2]
                             + github_img_url
-                            + line[end_url_index :]
+                            + line[end_url_index:]
                         )
                         # 更新链接查找的起始位置
                         start_link_index = end_url_index + 1
@@ -140,12 +147,18 @@ class BlogPost:
 
             # 返回更新后的Markdown内容
             return updated_content
-        except Exception as e:
+        except Exception:
             logger.exception("Error in markdown content replacement")
-    def _gen_prefix(self)->str:
+
+    def _gen_prefix(self) -> str:
         logger.debug("Generating YAML front matter for markdown...")
         try:
-            if self.title is None or self.shared_metadata is None or self.image_path is None:
+            if (
+                self.file_name is None
+                or self.title is None
+                or self.shared_metadata is None
+                or self.image_path is None
+            ):
                 raise Exception("title or shared_metadata or image_path is None")
             return f"""---
 title: {self.title}
@@ -161,5 +174,3 @@ draft: false
 """
         except Exception as e:
             logger.error(f"Error generating YAML front matter: {e}")
-
-

@@ -1,14 +1,7 @@
 # from src.hello_world import main 
 from hello_world import main 
 from hello_world.ImageHelper import ImageManager
-def test_read_and_write_md():
-    lines = main.read_md(
-        r"D:\code\python_uv_test\hello-world\src\res\test.md"
-    )
-    main.write_md(
-        r"D:\code\python_uv_test\hello-world\src\res\README-copy.md", lines
-    )
-    
+
 def test_read_images():
     image_helper = ImageManager(r"D:\code\python_uv_test\hello-world\src\res")
     for i in range(5):
