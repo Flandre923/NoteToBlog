@@ -4,8 +4,8 @@ from typing import List
 
 from loguru import logger
 
-from hello_world.GitHubUploader import GitHubUploader
-from hello_world.ImageHelper import ImageManager
+from note_2_blog.GitHubUploader import GitHubUploader
+from note_2_blog.ImageHelper import ImageManager
 
 
 class SharedMetadata:
@@ -33,6 +33,7 @@ class BlogPost:
         file_path: str,
         relative_path: str,
         out_path: str,
+        is_appned_content: bool,
     ):
         self.image_manager: ImageManager = image_manager
         self.uploader: GitHubUploader = uploader
@@ -45,6 +46,7 @@ class BlogPost:
         self.file_path: str = file_path  # 文件的路径
         self.out_path: str = out_path  # 输出root的路径
         self.shared_metadata: SharedMetadata  # 共享的元数据
+        self.is_append_content: bool = is_appned_content  # 是否在结尾追加内容
 
     def __str__(self):
         return (
@@ -141,9 +143,15 @@ class BlogPost:
 
                 # 添加处理后的行到新的内容列表
                 updated_lines.append(line)
-
             # 将新的内容列表合并为字符串
-            updated_content = self._gen_prefix() + "\n".join(updated_lines)
+            if self.is_append_content:
+                updated_content = (
+                    self._gen_prefix()
+                    + "\n".join(updated_lines)
+                    + self._append_content()
+                )
+            else:
+                updated_content = self._gen_prefix() + "\n".join(updated_lines)
 
             # 返回更新后的Markdown内容
             return updated_content
@@ -174,3 +182,10 @@ draft: false
 """
         except Exception as e:
             logger.error(f"Error generating YAML front matter: {e}")
+
+    def _append_content(self) -> str:
+        return """
+
+---
+本文是个人学习记录，如果有侵权请联系后删除。
+"""

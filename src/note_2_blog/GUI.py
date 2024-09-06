@@ -3,7 +3,7 @@ from tkinter import filedialog, messagebox
 from typing import Callable
 
 class PathChooser:
-    def __init__(self, root: tk.Tk,main:Callable[[str,str,str],None]):
+    def __init__(self, root: tk.Tk,main:Callable[[str,str,str,bool],None]):
         self.root = root
         self.root.title("路径选择器")
 
@@ -11,6 +11,7 @@ class PathChooser:
         self.input_folder_path = tk.StringVar()
         self.output_folder_path = tk.StringVar()
         self.image_path = tk.StringVar()
+        self.append_content = tk.BooleanVar()
 
         # 创建文本框和按钮
         self.input_folder_text = tk.Text(self.root, height=1, width=50)
@@ -19,6 +20,9 @@ class PathChooser:
         self.output_folder_button = tk.Button(self.root, text="选择输出文件夹", command=self.choose_output_folder)
         self.image_path_text = tk.Text(self.root, height=1, width=50)
         self.image_path_button = tk.Button(self.root, text="选择图片路径", command=self.choose_image_path)
+        self.append_checkbox = tk.Checkbutton(
+            self.root, text="追加内容", variable=self.append_content
+        )
         self.start_button = tk.Button(self.root, text="开始", command=self.start_process)
 
         # 布局
@@ -28,9 +32,10 @@ class PathChooser:
         self.output_folder_button.grid(row=1, column=0, padx=10, pady=10)
         self.image_path_text.grid(row=2, column=1, padx=10, pady=10)
         self.image_path_button.grid(row=2, column=0, padx=10, pady=10)
+        self.append_checkbox.grid(row=3, column=1, padx=10, pady=10)
         self.start_button.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
 
-        self.main:Callable[[str,str,str],None] = main
+        self.main:Callable[[str,str,str,bool],None] = main
         
     def choose_input_folder(self):
         folder_path = filedialog.askdirectory()
@@ -51,13 +56,12 @@ class PathChooser:
         self.image_path.set(image_path)
 
     def start_process(self):
-        # 这里假设 main 函数定义在其他地方，并将在此处调用
         if self.main is not None and self.input_folder_path.get() !="" and self.output_folder_path.get() !="" and self.image_path.get() !="":
-            self.main(self.input_folder_path.get(),self.output_folder_path.get(),self.image_path.get())
+            self.main(self.input_folder_path.get(),self.output_folder_path.get(),self.image_path.get(),self.append_content.get())
         messagebox.showinfo("完成", "处理完成")
 
 
-def run(main:Callable[[str,str,str],None]):
+def run(main:Callable[[str,str,str,bool],None]):
     # 创建主窗口
     root = tk.Tk()
     # 创建 PathChooser 实例

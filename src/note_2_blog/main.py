@@ -2,11 +2,11 @@ import os
 
 from dotenv import load_dotenv
 
-from hello_world.ArticleInfomation import BlogPost
-from hello_world.DirsManager import DirsManager
-from hello_world.GitHubUploader import GitHubUploader
-from hello_world.GUI import run
-from hello_world.ImageHelper import ImageManager
+from note_2_blog.ArticleInfomation import BlogPost
+from note_2_blog.DirsManager import DirsManager
+from note_2_blog.GitHubUploader import GitHubUploader
+from note_2_blog.GUI import run
+from note_2_blog.ImageHelper import ImageManager
 
 load_dotenv()
 
@@ -21,7 +21,7 @@ def execute_wrapper():
     github_config = GithubCofig()
     upload_helper = GitHubUploader(github_config.repo, github_config.token, "img")
 
-    def execute(input_path: str, output: str, img: str) -> None:
+    def execute(input_path: str, output: str, img: str,is_append:bool) -> None:
         image_manager = ImageManager(img)
         dirs = DirsManager(root_dir=input_path, output=output)
         for md_file in dirs.md_files:
@@ -32,6 +32,7 @@ def execute_wrapper():
                 md_file.file_path,
                 md_file.relative_path,
                 dirs.out_put,
+                is_append
             ).reslove()
 
     return execute
