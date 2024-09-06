@@ -13,7 +13,7 @@ class GitHubUploader:
     ):
         """
         初始化GitHubUploader对象。
-        
+
         :param repo_path: GitHub仓库路径，格式为"用户名/仓库名"。
         :param token: GitHub访问令牌。
         :param path: 保存仓库的路径
@@ -32,16 +32,16 @@ class GitHubUploader:
             with open(self.cache_file, "r", encoding="utf-8") as f:
                 return json.load(f)
         return {}
-    
+
     def _save_cache(self):
         """将缓存保存到文件"""
-        with open(self.cache_file, 'w', encoding='utf-8') as f:
+        with open(self.cache_file, "w", encoding="utf-8") as f:
             json.dump(self.cache, f)
 
-    def upload(self, file_path: str) -> Tuple[str,str]:
+    def upload(self, file_path: str) -> Tuple[str, str]:
         """
         上传文件到GitHub仓库。
-        
+
         :param file_path: 要上传的文件的本地路径。
         :return: 上传成功后返回的文件名。
         """
@@ -77,7 +77,7 @@ class GitHubUploader:
     def _upload_file(self, file_data: str) -> Tuple[str, str]:
         """
         上传文件到GitHub API。
-        
+
         :param file_data: 文件的base64编码字符串。
         :return: API响应和文件名。
         """
@@ -96,4 +96,3 @@ class GitHubUploader:
         except Exception as err:
             logger.error(f"An error occurred: {err}")
             raise
-        

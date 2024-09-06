@@ -3,6 +3,7 @@ import random
 from pathlib import Path
 from loguru import logger
 
+
 class ImageManager:
     def __init__(self, image_path: str) -> None:
         self.images: List[str] = []

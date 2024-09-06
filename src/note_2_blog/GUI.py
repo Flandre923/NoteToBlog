@@ -2,8 +2,9 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from typing import Callable
 
+
 class PathChooser:
-    def __init__(self, root: tk.Tk,main:Callable[[str,str,str,bool],None]):
+    def __init__(self, root: tk.Tk, main: Callable[[str, str, str, bool], None]):
         self.root = root
         self.root.title("路径选择器")
 
@@ -15,15 +16,23 @@ class PathChooser:
 
         # 创建文本框和按钮
         self.input_folder_text = tk.Text(self.root, height=1, width=50)
-        self.input_folder_button = tk.Button(self.root, text="选择输入文件夹", command=self.choose_input_folder)
+        self.input_folder_button = tk.Button(
+            self.root, text="选择输入文件夹", command=self.choose_input_folder
+        )
         self.output_folder_text = tk.Text(self.root, height=1, width=50)
-        self.output_folder_button = tk.Button(self.root, text="选择输出文件夹", command=self.choose_output_folder)
+        self.output_folder_button = tk.Button(
+            self.root, text="选择输出文件夹", command=self.choose_output_folder
+        )
         self.image_path_text = tk.Text(self.root, height=1, width=50)
-        self.image_path_button = tk.Button(self.root, text="选择图片路径", command=self.choose_image_path)
+        self.image_path_button = tk.Button(
+            self.root, text="选择图片路径", command=self.choose_image_path
+        )
         self.append_checkbox = tk.Checkbutton(
             self.root, text="追加内容", variable=self.append_content
         )
-        self.start_button = tk.Button(self.root, text="开始", command=self.start_process)
+        self.start_button = tk.Button(
+            self.root, text="开始", command=self.start_process
+        )
 
         # 布局
         self.input_folder_text.grid(row=0, column=1, padx=10, pady=10)
@@ -35,8 +44,8 @@ class PathChooser:
         self.append_checkbox.grid(row=3, column=1, padx=10, pady=10)
         self.start_button.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
 
-        self.main:Callable[[str,str,str,bool],None] = main
-        
+        self.main: Callable[[str, str, str, bool], None] = main
+
     def choose_input_folder(self):
         folder_path = filedialog.askdirectory()
         self.input_folder_text.delete(1.0, tk.END)
@@ -56,15 +65,25 @@ class PathChooser:
         self.image_path.set(image_path)
 
     def start_process(self):
-        if self.main is not None and self.input_folder_path.get() !="" and self.output_folder_path.get() !="" and self.image_path.get() !="":
-            self.main(self.input_folder_path.get(),self.output_folder_path.get(),self.image_path.get(),self.append_content.get())
+        if (
+            self.main is not None
+            and self.input_folder_path.get() != ""
+            and self.output_folder_path.get() != ""
+            and self.image_path.get() != ""
+        ):
+            self.main(
+                self.input_folder_path.get(),
+                self.output_folder_path.get(),
+                self.image_path.get(),
+                self.append_content.get(),
+            )
         messagebox.showinfo("完成", "处理完成")
 
 
-def run(main:Callable[[str,str,str,bool],None]):
+def run(main: Callable[[str, str, str, bool], None]):
     # 创建主窗口
     root = tk.Tk()
     # 创建 PathChooser 实例
-    PathChooser(root,main)
+    PathChooser(root, main)
     # 运行主循环
     root.mainloop()

@@ -1,12 +1,13 @@
 from typing import List
-import os 
+import os
 from loguru import logger
 
+
 class RelativateDirs:
-    def __init__(self, file_path: str, relative_path:str) -> None:
-        self.file_path:str = file_path
-        self.relative_path:str = relative_path
-        
+    def __init__(self, file_path: str, relative_path: str) -> None:
+        self.file_path: str = file_path
+        self.relative_path: str = relative_path
+
 
 class DirsManager:
     # 1. 给出root dir的路径
@@ -42,12 +43,13 @@ class DirsManager:
                             )
                         logger.info(f"Found init.json for md file: {md_file_path}")
                     except FileNotFoundError as e:
-                        logger.error(f"files not have init json: {os.path.dirname(file)}, error is: {e}")
+                        logger.error(
+                            f"files not have init json: {os.path.dirname(file)}, error is: {e}"
+                        )
                         continue
 
-    def calculate_relative_paths(self,md_file:str)->str:
+    def calculate_relative_paths(self, md_file: str) -> str:
         # 计算root_dir和md文件的相对路径
         md_dir_path = os.path.dirname(md_file)
         relative_path = os.path.relpath(md_dir_path, self.root_dir)
         return relative_path
-    
